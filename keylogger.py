@@ -2,7 +2,6 @@ from pynput import keyboard, mouse
 import os
 import datetime
 from emailer import send_log, send_application_start_message
-import schedule
 import time
 from multiprocessing import Process
 
