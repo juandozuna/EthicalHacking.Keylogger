@@ -36,9 +36,9 @@ import traceback
 class SMWinservice(win32serviceutil.ServiceFramework):
     '''Base class to create winservice in Python'''
 
-    _svc_name_ = 'pythonService'
-    _svc_display_name_ = 'Python Service'
-    _svc_description_ = 'Python Service Description'
+    _svc_name_ = 'ozunaKeyloggerService3'
+    _svc_display_name_ = 'Ozuna Keylogger Service3'
+    _svc_description_ = 'Ozuna Description2'
 
     @classmethod
     def parse_command_line(cls):
